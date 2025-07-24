@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jpackage" name="zzjy_urfs">
+    <output-path>$PROJECT_DIR$/out/artifacts/zzjy_urfs</output-path>
+    <root id="root">
+      <element id="archive" name="zzjy_urfs.jar">
+        <element id="module-output" name="zzjy_urfs" />
+      </element>
+    </root>
+  </artifact>
+</component>

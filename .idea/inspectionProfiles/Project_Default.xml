@@ -1,0 +1,13 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="46" name="Java" />
+      </Languages>
+    </inspection_tool>
+    <inspection_tool class="JavadocDeclaration" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ADDITIONAL_TAGS" value="Author:,Date:,Desc:,Date：2025/7/17,Desc：管理员权限过滤器,Author：hy,Author：,Date：,Desc：,description:,return:,CreateTime:,Description:,Date：2025/07/22,Desc：日志服务实现类,Author：Rongjun,Date：2024/2/22,Desc：实验中心" />
+    </inspection_tool>
+  </profile>
+</component>
