@@ -55,9 +55,9 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 
 	@Override
 	public List<CourseExperimentEntity> getExperimentInfoByCourseId(Integer courseId) {
-		Map map = new HashMap<>();
-		map.put("course_id",courseId);
-		return courseExperimentMapper.selectByMap(map);
+//		Map map = new HashMap<>();
+//		map.put("course_id",courseId);
+		return courseExperimentMapper.getExperimentInfoByCourseId(courseId);
 	}
 
 	@Override

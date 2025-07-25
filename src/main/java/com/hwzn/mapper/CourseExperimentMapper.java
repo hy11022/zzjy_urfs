@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @Author: hy
  * @Date: 2025/7/24 11:02
@@ -30,4 +32,18 @@ public interface CourseExperimentMapper extends BaseMapper<CourseExperimentEntit
             " ${ew.customSqlSegment}")
     IPage<CourseExperimentEntity> filterCourseExperimentScoreRateList(Page<CourseExperimentEntity> page, @Param("ew") QueryWrapper<CourseExperimentEntity> queryWrapper);
 
+
+    @Select("SELECT * FROM course_experiments WHERE course_id=#{courseId}" +
+            " ORDER BY " +
+            "    CASE " +
+            "        WHEN experiment_start_time <= NOW() AND experiment_end_time >= NOW() THEN 1 " +
+            "        WHEN experiment_start_time > NOW() THEN 2 " +
+            "        WHEN experiment_end_time < NOW() THEN 3" +
+            "    END," +
+            "    CASE " +
+            "        WHEN experiment_start_time <= NOW() AND experiment_end_time >= NOW() THEN experiment_start_time " +
+            "        WHEN experiment_start_time > NOW() THEN experiment_start_time" +
+            "        WHEN experiment_end_time < NOW() THEN experiment_start_time " +
+            "    END;")
+    List<CourseExperimentEntity> getExperimentInfoByCourseId(Integer courseId);
 }
