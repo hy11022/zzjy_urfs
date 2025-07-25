@@ -48,6 +48,9 @@ public class CourseController {
 	@Resource
 	CourseMaterialService courseMaterialService;
 
+	@Resource
+	CourseExperimentService courseExperimentService;
+
 	//筛选课程列表
 	@PostMapping("/filterCourseList")
 	public Result filterCourseList(@Validated @RequestBody GetCourseListByPageDto getCourseListByPageDto){
@@ -160,7 +163,7 @@ public class CourseController {
 		if(!courseTermEntity.isEmpty()){
 			CourseTermVo courseTermVo = new CourseTermVo();
 			BeanUtils.copyProperties(courseTermEntity.get(0),courseTermVo);
-			courseInfoVo.setCurrentTermInfo(courseTermVo);
+			courseInfoVo.setCurrentTermInfo(courseTermVo);//课程学期
 			courseStudentEntity.setTermId(courseTermEntity.get(0).getId());
 		}
 		courseStudentEntity.setCourseId(idDto.getId());
@@ -168,10 +171,13 @@ public class CourseController {
 		courseStudentEntity.setAccount(account);
 
 		List<CourseStudentEntity> entityList = courseStudentService.getCourseStudentForCurrent(courseStudentEntity);
-        courseInfoVo.setJoined(!entityList.isEmpty());
+        courseInfoVo.setJoined(!entityList.isEmpty());//是否加入课程
 
 		List<CourseMaterialsEntity> materialList = courseMaterialService.getCourseMaterialByCourse(idDto.getId());
-		courseInfoVo.setMaterialList(materialList);
+		courseInfoVo.setMaterialList(materialList);//课程资料
+
+		List<CourseExperimentEntity> courseExperimentList = courseExperimentService.getExperimentInfoByCourseId(idDto.getId());
+		courseInfoVo.setExperimentList(courseExperimentList);//课程实验
         return Result.showInfo(0,"Success", JSONUtil.parseObj(courseInfoVo));
 	}
 

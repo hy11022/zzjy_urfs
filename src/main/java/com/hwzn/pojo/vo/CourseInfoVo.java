@@ -2,6 +2,7 @@ package com.hwzn.pojo.vo;
 
 import cn.hutool.json.JSONArray;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hwzn.pojo.entity.CourseExperimentEntity;
 import com.hwzn.pojo.entity.CourseMaterialsEntity;
 import com.hwzn.pojo.entity.UserEntity;
 import lombok.Data;
@@ -42,6 +43,8 @@ public class CourseInfoVo implements Serializable {
     private Object currentTermInfo;
 
     private List<CourseMaterialsEntity> materialList;
+
+    private List<CourseExperimentEntity> experimentList;
 
     private boolean isJoined;
 }

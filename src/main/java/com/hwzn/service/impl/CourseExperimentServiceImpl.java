@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hwzn.mapper.CourseExperimentMapper;
 import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentListDto;
+import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentRateDto;
 import com.hwzn.pojo.entity.CourseExperimentEntity;
 import com.hwzn.service.CourseExperimentService;
 import com.hwzn.util.CommonUtil;
@@ -36,6 +37,15 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 //				.eq(filterCourseExperimentListDto.getAllowTrain() !=null,"a.allow_train",filterCourseExperimentListDto.getAllowTrain())
 //				.eq(StrUtil.isNotBlank(filterCourseExperimentListDto.getProjectName()),"a.project_name",filterCourseExperimentListDto.getProjectName());
 		return courseExperimentMapper.filterCourseExperimentList(page,queryWrapper);
+	}
+
+	@Override
+	public IPage<CourseExperimentEntity> filterCourseExperimentScoreRateList(FilterCourseExperimentRateDto filterCourseExperimentRateDto) {
+		Page<CourseExperimentEntity> page = new Page<>(filterCourseExperimentRateDto.getPageNum(),filterCourseExperimentRateDto.getPageSize());//分页
+		QueryWrapper<CourseExperimentEntity> queryWrapper = new QueryWrapper<>();
+		CommonUtil.handleSortQuery(queryWrapper, filterCourseExperimentRateDto.getSortArray(), "a");
+		queryWrapper.eq(filterCourseExperimentRateDto.getCourseId() !=null,"a.course_id",filterCourseExperimentRateDto.getCourseId());
+		return courseExperimentMapper.filterCourseExperimentScoreRateList(page,queryWrapper);
 	}
 
 	@Override

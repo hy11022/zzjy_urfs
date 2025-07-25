@@ -26,4 +26,8 @@ public interface CourseExperimentMapper extends BaseMapper<CourseExperimentEntit
             " ${ew.customSqlSegment}")
     IPage<CourseExperimentEntity> filterCourseExperimentList(Page<CourseExperimentEntity> page, @Param("ew") QueryWrapper<CourseExperimentEntity> queryWrapper);
 
+    @Select("SELECT a.id,a.name,a.score_rate FROM course_experiments a" +
+            " ${ew.customSqlSegment}")
+    IPage<CourseExperimentEntity> filterCourseExperimentScoreRateList(Page<CourseExperimentEntity> page, @Param("ew") QueryWrapper<CourseExperimentEntity> queryWrapper);
+
 }

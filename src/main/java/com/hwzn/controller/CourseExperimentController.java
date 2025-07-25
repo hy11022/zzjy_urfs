@@ -8,9 +8,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hwzn.pojo.Result;
 import com.hwzn.pojo.dto.common.IdDto;
-import com.hwzn.pojo.dto.courseExperiment.CreateCourseExperimentDto;
-import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentListDto;
-import com.hwzn.pojo.dto.experiment.UpdateCourseExperimentDto;
+import com.hwzn.pojo.dto.courseExperiment.*;
 import com.hwzn.pojo.entity.CourseEntity;
 import com.hwzn.pojo.entity.CourseExperimentEntity;
 import com.hwzn.service.CourseExperimentService;
@@ -18,6 +16,7 @@ import com.hwzn.service.CourseService;
 import com.hwzn.service.LogService;
 import com.hwzn.util.JWTUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -191,6 +190,52 @@ public class CourseExperimentController {
 		logService.createUserLog(JWTUtil.getAccount(request.getHeader("token")),"删除课程实验，ID为："+idDto.getId());
 		//清除数据日志
 		logService.deleteDataLogByData("course_experiments",idDto.getId());
+		return Result.showInfo(0,"Success", null);
+	}
+
+	//筛选课程实验成绩占比列表
+	@PostMapping("/filterCourseExperimentScoreRateList")
+	public Result filterCourseExperimentScoreRateList(@Validated @RequestBody FilterCourseExperimentRateDto filterCourseExperimentRateDto, HttpServletRequest request){
+		//先判断课程是否存在
+		CourseEntity courseInfo = courseService.getCourseById(filterCourseExperimentRateDto.getCourseId());
+		if(courseInfo == null){
+			return Result.showInfo(2,"课程不存在",null);
+		}
+
+//		String account = JWTUtil.getAccount(request.getHeader("token"));
+//		Integer role = JWTUtil.getRole(request.getHeader("token"));
+//
+//		if(role != 1 && !StrUtil.equals(courseInfo.getChargerAccount(), account) && ( !courseInfo.getAssistants().contains(Objects.requireNonNull(account)) || !courseInfo.getAssistantAuthority().contains("edit-course"))){
+//			return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以查看",null);
+//		}
+
+		IPage<CourseExperimentEntity> resultList = courseExperimentService.filterCourseExperimentScoreRateList(filterCourseExperimentRateDto);
+		return Result.showInfo(0,"Success", JSONUtil.parseObj(resultList));
+	}
+
+	//更新课程实验
+	@PostMapping("/updateCourseExperimentScoreRateList")
+	@Transactional
+	public Result updateCourseExperimentScoreRateList(@Validated @RequestBody UpdateCourseExperimentRateDto updateCourseExperimentRateDto, HttpServletRequest request){
+		List rateList = updateCourseExperimentRateDto.getRateList();
+		int totalRate = 0;
+		for (Object o : rateList) {
+			JSONObject jo = JSONUtil.parseObj(o);
+			totalRate = totalRate +Integer.parseInt(jo.getStr("scoreRate"));
+		}
+		if(totalRate != 100){
+			return Result.showInfo(1,"成绩占比总和应为100", null);
+		}
+        for (Object o : rateList) {
+            JSONObject jo = JSONUtil.parseObj(o);
+            CourseExperimentEntity courseExperimentEntity = new CourseExperimentEntity();
+            courseExperimentEntity.setId(Integer.parseInt(jo.getStr("id")));
+            courseExperimentEntity.setScoreRate(Integer.parseInt(jo.getStr("scoreRate")));
+			if(courseExperimentService.updateCourseExperiment(courseExperimentEntity)==0){
+				return Result.showInfo(1,"更新失败", null);
+			}
+        }
+		logService.createUserLog(JWTUtil.getAccount(request.getHeader("token")),"更新课程实验，参数为："+JSONUtil.parseObj(updateCourseExperimentRateDto));
 		return Result.showInfo(0,"Success", null);
 	}
 }

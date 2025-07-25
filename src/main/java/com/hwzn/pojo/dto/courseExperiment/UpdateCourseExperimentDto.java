@@ -1,4 +1,4 @@
-package com.hwzn.pojo.dto.experiment;
+package com.hwzn.pojo.dto.courseExperiment;
 
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
