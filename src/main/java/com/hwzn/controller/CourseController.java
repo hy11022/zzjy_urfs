@@ -154,7 +154,7 @@ public class CourseController {
 		CourseEntity courseInfo = courseService.getCourseInfoById(idDto.getId());
 		CourseInfoVo courseInfoVo = new CourseInfoVo();//存储最终返回值
 		BeanUtils.copyProperties(courseInfo,courseInfoVo);
-
+		courseInfoVo.setAssistants(courseInfo.getAssistants());
 		List<UserEntity> userEntity = userService.getAssisListByAccounts(courseInfo.getAssistants());
 		courseInfoVo.setAssistantList(userEntity);
 

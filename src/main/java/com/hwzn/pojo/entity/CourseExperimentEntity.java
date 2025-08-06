@@ -60,5 +60,10 @@ public class CourseExperimentEntity {
 
 	private Integer reportMethod;//报告批阅形式，1教师批阅2自动成绩3自动成绩+教师批阅
 
+	private Integer teacherRate;
+
 	private Integer allowTrain;
+
+	@TableField(exist = false)//不属于表字段,实训时长
+	private String courseName;
 }

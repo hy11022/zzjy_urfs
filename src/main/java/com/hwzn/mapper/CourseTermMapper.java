@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import com.hwzn.pojo.entity.CourseTermEntity;
 import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
 
 /**
  * @Author: hy
@@ -24,4 +25,10 @@ public interface CourseTermMapper extends BaseMapper<CourseTermEntity> {
             "LEFT JOIN courses ON course_terms.course_id = courses.id " +
             "${ew.customSqlSegment} ")
     IPage<CourseTermEntity> filterCourseTermList(Page<CourseTermEntity> page, @Param("ew") QueryWrapper<CourseTermEntity> queryWrapper);
+
+    @Select("SELECT * FROM course_terms WHERE course_id=#{courseId} AND status=1")
+    List<CourseTermEntity> getCurrentTermInfoByCourseId(Integer courseId);
+
+    @Select("SELECT course_id FROM course_terms WHERE status=1")
+    List<CourseTermEntity> getCourseTermListOnTime();
 }

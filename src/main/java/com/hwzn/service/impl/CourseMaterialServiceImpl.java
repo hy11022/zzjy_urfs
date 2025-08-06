@@ -11,11 +11,7 @@ import com.hwzn.mapper.CourseMaterialMapper;
 import cn.hutool.core.util.StrUtil;
 import javax.annotation.Resource;
 import com.hwzn.util.CommonUtil;
-
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: hy
@@ -64,9 +60,6 @@ public class CourseMaterialServiceImpl implements CourseMaterialService {
 
 	@Override
 	public List<CourseMaterialsEntity> getCourseMaterialByCourse(Integer courseId) {
-//		Map map = new HashMap<>();
-//		map.put("course_id",courseId);
-//		map.put("status",1);
 		return courseMaterialMapper.getCourseMaterialByCourse(courseId);
 	}
 }

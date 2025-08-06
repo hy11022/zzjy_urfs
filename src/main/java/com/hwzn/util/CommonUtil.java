@@ -2,6 +2,7 @@ package com.hwzn.util;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,10 @@ import javax.annotation.Resource;
 import cn.hutool.json.JSONArray;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -269,4 +274,38 @@ public class CommonUtil {
 			return String.format("%.2f", bytes/1024.00/1024.00/1024.00) + " GB";
 		}
 	}
+
+	public static String formatMillisToTime(long milliseconds) {//时间差转时分秒
+		Duration duration = Duration.ofMillis(milliseconds);
+		long hours = duration.toHours();
+		long minutes = duration.toMinutes() % 60;
+		long seconds = duration.getSeconds() % 60;
+
+		if (hours > 0) {
+			return String.format("%d小时%d分%d秒", hours, minutes, seconds);
+		} else if (minutes > 0) {
+			return String.format("%d分%d秒", minutes, seconds);
+		} else {
+			return String.format("%d秒", seconds);
+		}
+	}
+
+	public static String timeStampToStr(long milliseconds) {//13位时间戳转年月日时分秒格式
+        return DateUtil.format(new Date(milliseconds), "yyyy-MM-dd HH:mm:ss");
+	}
+
+	public static long strToTime(String Start_time,String end_time) {
+		// 定义时间格式
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+		// 解析时间字符串
+		LocalDateTime startTime = LocalDateTime.parse(Start_time, formatter);
+		LocalDateTime endTime = LocalDateTime.parse(end_time, formatter);
+
+		// 计算时间差（秒数）
+		long secondsDiff = ChronoUnit.SECONDS.between(startTime, endTime);
+        return secondsDiff;
+	}
+
+
 }

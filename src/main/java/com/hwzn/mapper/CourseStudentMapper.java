@@ -32,6 +32,12 @@ public interface CourseStudentMapper extends BaseMapper<CourseStudentEntity> {
             " AND account IN (SELECT account FROM users WHERE class_code = #{code})")
     List<CourseStudentEntity> getCourseStudentByEntity(CourseStudentEntity courseStudentEntity);
 
+    @Select("SELECT * FROM course_students " +
+            " WHERE course_id=#{courseId}" +
+            " AND term_id=#{termId}" +
+            " AND account = #{account}")
+    List<CourseStudentEntity> checkCourseStudentByEntity(CourseStudentEntity courseStudentEntity);
+
     @Insert("INSERT INTO course_students (course_id,term_id,account)" +
             " SELECT #{courseId}, #{termId},account FROM users WHERE class_code=#{code};")
     Integer addCourseStudentByDto(AddCourseClassDto addCourseClassDto);

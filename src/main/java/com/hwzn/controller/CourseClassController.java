@@ -62,7 +62,7 @@ public class CourseClassController {
             return Result.showInfo(2,"指定课程期次不存在",null);
         }
 
-        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && (!courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
+        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && (!courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("course-term"))){
             return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
         }
         IPage<CourseClassEntity> resultList = courseClassService.filterCourseClassList(filterCourseClassListDtot);

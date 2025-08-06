@@ -1,20 +1,22 @@
 package com.hwzn.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hwzn.mapper.CourseExperimentMapper;
+import com.hwzn.pojo.dto.common.IdDto;
 import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentListDto;
 import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentRateDto;
+import com.hwzn.pojo.dto.courseExperiment.FilterMyTrainCourseExperimentListDto;
 import com.hwzn.pojo.entity.CourseExperimentEntity;
+import com.hwzn.pojo.vo.DataVo;
 import com.hwzn.service.CourseExperimentService;
 import com.hwzn.util.CommonUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: hy
@@ -34,8 +36,6 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 		CommonUtil.handleSortQuery(queryWrapper, filterCourseExperimentListDto.getSortArray(), "a");
 		queryWrapper.like(StrUtil.isNotBlank(filterCourseExperimentListDto.getName()),"a.name",filterCourseExperimentListDto.getName())
 				.eq(filterCourseExperimentListDto.getCourseId() !=null,"a.course_id",filterCourseExperimentListDto.getCourseId());
-//				.eq(filterCourseExperimentListDto.getAllowTrain() !=null,"a.allow_train",filterCourseExperimentListDto.getAllowTrain())
-//				.eq(StrUtil.isNotBlank(filterCourseExperimentListDto.getProjectName()),"a.project_name",filterCourseExperimentListDto.getProjectName());
 		return courseExperimentMapper.filterCourseExperimentList(page,queryWrapper);
 	}
 
@@ -55,8 +55,6 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 
 	@Override
 	public List<CourseExperimentEntity> getExperimentInfoByCourseId(Integer courseId) {
-//		Map map = new HashMap<>();
-//		map.put("course_id",courseId);
 		return courseExperimentMapper.getExperimentInfoByCourseId(courseId);
 	}
 
@@ -73,5 +71,24 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 	@Override
 	public Integer deleteById(Integer id) {
 		return courseExperimentMapper.deleteById(id);
+	}
+
+	@Override
+	public IPage<CourseExperimentEntity> filterMyTrainCourseExperimentList(FilterMyTrainCourseExperimentListDto filterMyTrainCourseExperimentListDto) {
+		Page<CourseExperimentEntity> page = new Page<>(filterMyTrainCourseExperimentListDto.getPageNum(),filterMyTrainCourseExperimentListDto.getPageSize());//分页
+		QueryWrapper<CourseExperimentEntity> queryWrapper = new QueryWrapper<>();
+		queryWrapper.like(StrUtil.isNotBlank(filterMyTrainCourseExperimentListDto.getName()),"a.name",filterMyTrainCourseExperimentListDto.getName())
+				.le("a.experiment_start_time",DateTime.now())
+				.ge("a.experiment_end_time", DateTime.now())
+				.eq("a.allow_train",1)
+				.apply("a.course_id IN (SELECT course_id FROM course_terms WHERE status =1)")
+				.apply("a.course_id IN (SELECT course_id FROM course_students WHERE term_id IN (SELECT id FROM course_terms WHERE status=1) AND account='"+filterMyTrainCourseExperimentListDto.getAccount()+"') ")
+				.apply("FIND_IN_SET('"+filterMyTrainCourseExperimentListDto.getClassCode()+"',a.experiment_class)");
+		return courseExperimentMapper.filterMyTrainCourseExperimentList(page,queryWrapper);
+	}
+
+	@Override
+	public DataVo fetchCourseExperimentDataAnalysis(IdDto idDto) {
+		return courseExperimentMapper.fetchCourseExperimentDataAnalysis(idDto);
 	}
 }

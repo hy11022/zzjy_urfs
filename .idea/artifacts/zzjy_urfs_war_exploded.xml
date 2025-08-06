@@ -66,9 +66,13 @@
           <element id="library" level="project" name="Maven: com.zaxxer:SparseBitSet:1.2" />
           <element id="library" level="project" name="Maven: org.apache.poi:poi-ooxml-lite:5.2.3" />
           <element id="library" level="project" name="Maven: org.apache.xmlbeans:xmlbeans:5.1.1" />
+          <element id="library" level="project" name="Maven: xml-apis:xml-apis:1.4.01" />
           <element id="library" level="project" name="Maven: com.github.virtuald:curvesapi:1.07" />
           <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.17.2" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-collections4:4.4" />
+          <element id="library" level="project" name="Maven: com.itextpdf:itextpdf:5.5.13.3" />
+          <element id="library" level="project" name="Maven: com.itextpdf:itext-asian:5.2.0" />
+          <element id="library" level="project" name="Maven: org.jsoup:jsoup:1.14.3" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="zzjy_urfs/web/Web" />

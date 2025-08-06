@@ -12,6 +12,7 @@ import com.hwzn.service.CourseStudentService;
 import com.hwzn.util.CommonUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,6 +60,11 @@ public class CourseStudentServiceImpl implements CourseStudentService {
 	@Override
 	public List<CourseStudentEntity> getCourseStudentByEntity(CourseStudentEntity courseStudentEntity) {
 		return courseStudentMapper.getCourseStudentByEntity(courseStudentEntity);
+	}
+
+	@Override
+	public List<CourseStudentEntity> checkCourseStudentByEntity(CourseStudentEntity courseStudentEntity) {
+		return courseStudentMapper.checkCourseStudentByEntity(courseStudentEntity);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package com.hwzn.controller;
 
-import cn.hutool.core.util.StrUtil;
 import com.hwzn.service.*;
 import com.hwzn.pojo.Result;
 import com.hwzn.util.JWTUtil;
@@ -49,10 +48,6 @@ public class CourseMaterialController {
         if(courseEntity==null){
             return Result.showInfo(2,"指定课程不存在",null);
         }
-
-//        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && (!courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
-//            return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
-//        }
         IPage<CourseMaterialsEntity> resultList = courseMaterialService.filterCourseMaterialList(filterCourseMaterialListDto);
         return Result.showInfo(0,"Success", JSONUtil.parseObj(resultList));
     }

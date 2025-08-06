@@ -11,6 +11,7 @@ import com.hwzn.service.CourseTermService;
 import com.hwzn.util.CommonUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class CourseTermServiceImpl implements CourseTermService {
 				.between("start_time",startTime,endTime)
 				.or()
 				.between("end_time",startTime,endTime))
-				.notIn(id != null,"id",id);
+				.notIn(id != null,"id",id);//去掉自身
 		return courseTermMapper.selectPage(page,queryWrapper);
 	}
 
@@ -83,5 +84,15 @@ public class CourseTermServiceImpl implements CourseTermService {
 		map.put("status",1);
 		map.put("course_id",courseId);
 		return courseTermMapper.selectByMap(map);
+	}
+
+	@Override
+	public List<CourseTermEntity> getCurrentTermInfoByCourseId(Integer courseId) {
+		return courseTermMapper.getCurrentTermInfoByCourseId(courseId);
+	}
+
+	@Override
+	public List<CourseTermEntity> getCourseTermListOnTime() {
+		return courseTermMapper.getCourseTermListOnTime();
 	}
 }

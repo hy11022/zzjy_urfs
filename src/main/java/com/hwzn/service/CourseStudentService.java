@@ -24,6 +24,8 @@ public interface CourseStudentService {
 
     List<CourseStudentEntity> getCourseStudentByEntity(CourseStudentEntity courseStudentEntity);
 
+    List<CourseStudentEntity> checkCourseStudentByEntity(CourseStudentEntity courseStudentEntity);
+
     Integer addCourseStudentByDto(AddCourseClassDto addCourseClassDto);
 
     Integer deleteCourseStudentByDto(AddCourseClassDto addCourseClassDto);

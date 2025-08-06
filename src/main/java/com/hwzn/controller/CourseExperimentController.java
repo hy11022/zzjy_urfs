@@ -11,9 +11,9 @@ import com.hwzn.pojo.dto.common.IdDto;
 import com.hwzn.pojo.dto.courseExperiment.*;
 import com.hwzn.pojo.entity.CourseEntity;
 import com.hwzn.pojo.entity.CourseExperimentEntity;
-import com.hwzn.service.CourseExperimentService;
-import com.hwzn.service.CourseService;
-import com.hwzn.service.LogService;
+import com.hwzn.pojo.entity.UserEntity;
+import com.hwzn.pojo.vo.DataVo;
+import com.hwzn.service.*;
 import com.hwzn.util.JWTUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +38,9 @@ public class CourseExperimentController {
 	
 	@Resource
 	CourseExperimentService courseExperimentService;
+
+	@Resource
+	UserService userService;
 
 	@Resource
 	LogService logService;
@@ -107,6 +110,10 @@ public class CourseExperimentController {
 		if(role != 1 && !StrUtil.equals(courseInfo.getChargerAccount(), account) && ( !courseInfo.getAssistants().contains(Objects.requireNonNull(account)) || !courseInfo.getAssistantAuthority().contains("edit-course"))){
 			return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以创建",null);
 		}
+		DateTime endTime = DateUtil.parseDateTime(createCourseExperimentDto.getExperimentEndTime());
+		if(DateTime.now().after(endTime)){
+			return Result.showInfo(3,"课程实验的结束时间应为当前时间之后",null);
+		}
 		JSONObject data = new JSONObject();
 		CourseExperimentEntity courseExperimentEntity = new CourseExperimentEntity();
 		BeanUtils.copyProperties(createCourseExperimentDto,courseExperimentEntity);
@@ -118,9 +125,12 @@ public class CourseExperimentController {
 		}else{
 			courseExperimentEntity.setScoreRate(0);
 		}
-		DateTime endTime = DateUtil.parseDateTime(createCourseExperimentDto.getExperimentEndTime());
-		if(DateTime.now().after(endTime)){
-			return Result.showInfo(3,"课程实验的结束时间应为当前时间之后",null);
+
+		if(courseExperimentEntity.getReportMethod()==1){
+			courseExperimentEntity.setTeacherRate(100);
+		}
+		if(courseExperimentEntity.getReportMethod()==2){
+			courseExperimentEntity.setTeacherRate(0);
 		}
 		if(courseExperimentService.create(courseExperimentEntity)==0){
 			return Result.showInfo(1,"创建失败", null);
@@ -156,8 +166,15 @@ public class CourseExperimentController {
 		if(DateTime.now().after(endTime)){
 			return Result.showInfo(3,"课程实验的结束时间应为当前时间之后",null);
 		}
+
 		CourseExperimentEntity courseExperimentEntity = new CourseExperimentEntity();
 		BeanUtils.copyProperties(updateCourseExperimentDto,courseExperimentEntity);
+		if(courseExperimentEntity.getReportMethod()==1){
+			courseExperimentEntity.setTeacherRate(100);
+		}
+		if(courseExperimentEntity.getReportMethod()==2){
+			courseExperimentEntity.setTeacherRate(0);
+		}
 		if(courseExperimentService.updateCourseExperiment(courseExperimentEntity)==0){
 			return Result.showInfo(1,"更新失败", null);
 		}
@@ -201,15 +218,23 @@ public class CourseExperimentController {
 		if(courseInfo == null){
 			return Result.showInfo(2,"课程不存在",null);
 		}
-
-//		String account = JWTUtil.getAccount(request.getHeader("token"));
-//		Integer role = JWTUtil.getRole(request.getHeader("token"));
-//
-//		if(role != 1 && !StrUtil.equals(courseInfo.getChargerAccount(), account) && ( !courseInfo.getAssistants().contains(Objects.requireNonNull(account)) || !courseInfo.getAssistantAuthority().contains("edit-course"))){
-//			return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以查看",null);
-//		}
-
 		IPage<CourseExperimentEntity> resultList = courseExperimentService.filterCourseExperimentScoreRateList(filterCourseExperimentRateDto);
+		return Result.showInfo(0,"Success", JSONUtil.parseObj(resultList));
+	}
+
+	//筛选允许我训练的课程实验列表
+	@PostMapping("/filterMyTrainCourseExperimentList")
+	public Result filterMyTrainCourseExperimentList(@Validated @RequestBody FilterMyTrainCourseExperimentListDto filterMyTrainCourseExperimentListDto, HttpServletRequest request){
+
+		String account = JWTUtil.getAccount(request.getHeader("token"));
+		Integer role = JWTUtil.getRole(request.getHeader("token"));
+		if(role != 3){
+			return Result.showInfo(2,"仅限学生调用",null);
+		}
+		filterMyTrainCourseExperimentListDto.setAccount(account);
+		UserEntity userEntity = userService.getUserInfoByAccount(account);
+		filterMyTrainCourseExperimentListDto.setClassCode(userEntity.getClassCode());
+		IPage<CourseExperimentEntity> resultList = courseExperimentService.filterMyTrainCourseExperimentList(filterMyTrainCourseExperimentListDto);
 		return Result.showInfo(0,"Success", JSONUtil.parseObj(resultList));
 	}
 
@@ -237,5 +262,12 @@ public class CourseExperimentController {
         }
 		logService.createUserLog(JWTUtil.getAccount(request.getHeader("token")),"更新课程实验，参数为："+JSONUtil.parseObj(updateCourseExperimentRateDto));
 		return Result.showInfo(0,"Success", null);
+	}
+
+	//拉取课程实验数据分析
+	@PostMapping("/fetchCourseExperimentDataAnalysis")
+	public Result fetchCourseExperimentDataAnalysis(@Validated @RequestBody IdDto idDto, HttpServletRequest request){
+		DataVo result = courseExperimentService.fetchCourseExperimentDataAnalysis(idDto);
+		return Result.showInfo(0,"Success", JSONUtil.parseObj(result));
 	}
 }

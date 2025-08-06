@@ -27,4 +27,10 @@ public interface CourseTermService {
     Integer deleteCourseTerm(Integer id);
 
     List<CourseTermEntity> getCurrentTermInfo(Integer courseId);
+
+    List<CourseTermEntity> getCurrentTermInfoByCourseId(Integer courseId);
+
+    List<CourseTermEntity> getCourseTermListOnTime();
+
+
 }

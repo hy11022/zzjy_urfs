@@ -17,8 +17,4 @@ public class FilterCourseExperimentListDto {
     private Integer courseId;
 
     private String name;
-
-//    private String projectName;
-//
-//    private Integer allowTrain;
 }

@@ -36,6 +36,8 @@ public class CourseInfoVo implements Serializable {
 
     private String video;
 
+    private String assistants;
+
     private String chargerName;
 
     private List<UserEntity> assistantList;

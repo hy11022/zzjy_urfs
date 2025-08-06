@@ -50,7 +50,7 @@ public class CourseTermController {
 
         CourseEntity courseEntity = courseService.getCourseById(filterCourseTermListDto.getCourseId());
 
-        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
+        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("course-term"))){
             return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
         }
         IPage<CourseTermEntity> resultList = courseTermService.filterCourseTermList(filterCourseTermListDto);
@@ -66,7 +66,7 @@ public class CourseTermController {
 
         CourseEntity courseEntity = courseService.getCourseById(createCourseTermDto.getCourseId());
 
-        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
+        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("course-term"))){
             return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
         }
         DateTime startTime = DateUtil.parseDateTime(createCourseTermDto.getStartTime());
@@ -106,7 +106,7 @@ public class CourseTermController {
 
         CourseEntity courseEntity = courseService.getCourseByTermId(updateCourseTermDto.getId());
 
-        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
+        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("course-term"))){
             return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
         }
         DateTime startTime = DateUtil.parseDateTime(updateCourseTermDto.getStartTime());
@@ -152,7 +152,7 @@ public class CourseTermController {
 
         CourseEntity courseEntity = courseService.getCourseByTermId(idDto.getId());
 
-        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("student-management"))){
+        if(role != 1 && !StrUtil.equals(courseEntity.getChargerAccount(), account) && ( !courseEntity.getAssistants().contains(Objects.requireNonNull(account)) || !courseEntity.getAssistantAuthority().contains("course-term"))){
             return Result.showInfo(2,"仅限管理员和课程负责人及含有相关权限的助教可以操作",null);
         }
 

@@ -50,7 +50,6 @@ public class CourseStudentController {
     //筛选课程学员列表
     @PostMapping("/filterCourseStudentList")
     public Result filterCourseStudentList(@Validated @RequestBody FilterCourseStudentListDto filterCourseStudentListDto, HttpServletRequest request){
-        System.out.println("filterCourseStudentListDto:"+filterCourseStudentListDto);
         String account = JWTUtil.getAccount(request.getHeader("token"));
         Integer role = JWTUtil.getRole(request.getHeader("token"));
 

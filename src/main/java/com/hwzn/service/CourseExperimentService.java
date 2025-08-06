@@ -1,9 +1,12 @@
 package com.hwzn.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.hwzn.pojo.dto.common.IdDto;
 import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentListDto;
 import com.hwzn.pojo.dto.courseExperiment.FilterCourseExperimentRateDto;
+import com.hwzn.pojo.dto.courseExperiment.FilterMyTrainCourseExperimentListDto;
 import com.hwzn.pojo.entity.CourseExperimentEntity;
+import com.hwzn.pojo.vo.DataVo;
 import java.util.List;
 
 /**
@@ -26,4 +29,8 @@ public interface CourseExperimentService {
     Integer updateCourseExperiment(CourseExperimentEntity courseExperimentEntity);
 
     Integer deleteById(Integer id);
+
+    IPage<CourseExperimentEntity> filterMyTrainCourseExperimentList(FilterMyTrainCourseExperimentListDto filterMyTrainCourseExperimentListDto);
+
+    DataVo fetchCourseExperimentDataAnalysis(IdDto idDto);
 }
