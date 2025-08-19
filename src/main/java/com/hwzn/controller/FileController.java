@@ -25,9 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Author：Rongjun Du
@@ -73,12 +71,13 @@ public class FileController {
 				}
 			}
 		}
+		Collections.reverse(resultList);
 		data.set("records",resultList);
 		return Result.showInfo(0,"Success", data);
 	}
 	
 	//创建文件夹
-	@PostMapping("/admin/createFolder")
+	@PostMapping("/createFolder")
 	public Result createFolder(@Validated @RequestBody CreateFolderDto createFolderDto, HttpServletRequest request)  {
 		File directory = new File((Objects.equals(CommonUtil.getOperationSystemType(), "linux")?"/usr/local":"D:")+"/source/zzjy_urfs/"+createFolderDto.getPath()+"/"+createFolderDto.getName());
 		if(directory.exists()){
@@ -93,7 +92,7 @@ public class FileController {
 	}
 	
 	//更新文件
-	@PostMapping("/admin/updateFile")
+	@PostMapping("/updateFile")
 	public Result updateFile(@Validated @RequestBody UpdateFileDto updateFileDto, HttpServletRequest request)  {
 		Path oldFile = Paths.get(Objects.requireNonNull(CommonUtil.urlToLocalPath(updateFileDto.getUrl())));
 		int index =  updateFileDto.getUrl().lastIndexOf("/");
@@ -113,7 +112,7 @@ public class FileController {
 	}
 	
 	//删除文件
-	@PostMapping("/admin/deleteFile")
+	@PostMapping("/deleteFile")
 	public Result deleteFile(@Validated @RequestBody UrlDto urlDto, HttpServletRequest request)  {
 		String path = CommonUtil.urlToLocalPath(urlDto.getUrl());
 		if (path==null) {
@@ -138,7 +137,7 @@ public class FileController {
 	}
 	
 	//批量删除文件
-	@PostMapping("/admin/batchDeleteFile")
+	@PostMapping("/batchDeleteFile")
 	public Result batchDeleteFile(@Validated @RequestBody UrlsDto urlsDto, HttpServletRequest request)  {
 		JSONArray urlList = JSONUtil.parseArray(urlsDto.getUrls());
 		for (Object o : urlList) {

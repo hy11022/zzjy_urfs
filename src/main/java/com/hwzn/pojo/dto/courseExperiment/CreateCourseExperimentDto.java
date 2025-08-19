@@ -63,9 +63,6 @@ public class CreateCourseExperimentDto {
 	@NotNull(message = "报告生成方式不能为空")
 	private Integer reportMethod;
 
-	@NotNull(message = "教师批改成绩占比不能为空")
-	@Min(value = 0, message = "最小值不能小于0")
-	@Max(value = 100, message = "最大值不能大于100")
 	private Integer teacherRate;
 
 	private Integer allowTrain;

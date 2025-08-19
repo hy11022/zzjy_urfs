@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="zzjy_urfs:war exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/zzjy_urfs_war_exploded</output-path>
+    <output-path>$PROJECT_DIR$/../../apache-tomcat-9.0.79/webapps/zzjy_urfs</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">

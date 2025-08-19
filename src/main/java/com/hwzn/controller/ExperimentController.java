@@ -101,10 +101,7 @@ public class ExperimentController {
 		if(role != 1 && !Objects.equals(experimentInfo.getCreaterAccount(), account)){
 			return Result.showInfo(1,"非管理员只能删除自己的实验", null);
 		}
-		//判断实验下辖是否含有分项
-//		if(itemService.countByExperimentId(idDto.getId())>0){
-//			return Result.showInfo(1,"实验下辖含有分项，不可删除", null);
-//		}
+
 		if(experimentService.deleteById(idDto.getId())==0){
 			return Result.showInfo(1,"删除失败", null);
 		}

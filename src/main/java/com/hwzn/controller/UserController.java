@@ -1,6 +1,9 @@
 package com.hwzn.controller;
 
 import java.util.*;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
 import com.hwzn.service.*;
 import com.hwzn.pojo.Result;
 import com.hwzn.util.JWTUtil;
@@ -38,13 +41,10 @@ public class UserController {
 	UserService userService;
 
 	@Resource
-	UserLogService userLogService;
-
-	@Resource
-	DbTbLogService dbTbLogService;
-
-	@Resource
 	LogService logService;
+
+	@Resource
+	ClientService clientService;
 
 	//筛选用户列表（管理员）
 	@PostMapping("/filterUserList")
@@ -57,7 +57,7 @@ public class UserController {
 	//创建用户（管理员）
 	@PostMapping("/admin/createUser")
 	public Result createUser(@Validated @RequestBody CreateUserDto createUserDto, HttpServletRequest request){
-
+		String account = JWTUtil.getAccount(request.getHeader("token"));
 		if(createUserDto.getRole()==3 && StrUtil.isEmpty(createUserDto.getClassCode())){
 			return Result.showInfo(2,"学生的班级编码不能为空",null);
 		}
@@ -69,15 +69,16 @@ public class UserController {
 		data.set("id",userEntity.getId());
 		//记录用户日志
 		userEntity.setPassword(null);
-		userLogService.createUserLog(CommonUtil.getUserLog("创建用户,内容为："+JSONUtil.toJsonStr(userEntity),JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createUserLog(account,"创建用户,内容为："+JSONUtil.toJsonStr(createUserDto));
 		//记录数据库日志
-		dbTbLogService.createDbTbLog(CommonUtil.getDbTbLog("users",userEntity.getId(),"创建",JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createDataLog(account,1,"users",userEntity.getId(),"创建用户,内容为："+JSONUtil.toJsonStr(createUserDto));
 		return Result.showInfo(0,"Success",data);
 	}
 
 	//更新用户
 	@PostMapping("/admin/updateUser")
 	public Result updateUser(@Validated @RequestBody UpdateUserDto updateUserDto, HttpServletRequest request){
+		String account = JWTUtil.getAccount(request.getHeader("token"));
 		//先判断ID指定的用户是否存在
 		UserEntity userInfo = userService.getUserById(updateUserDto.getId());
 		if(userInfo == null){
@@ -88,10 +89,9 @@ public class UserController {
 		BeanUtils.copyProperties(updateUserDto,userEntity);
 		//更新用户
 		userService.updateUser(userEntity);
-		//记录用户日志
-		userLogService.createUserLog(CommonUtil.getUserLog("更新用户,内容为："+JSONUtil.toJsonStr(userEntity),JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createUserLog(account,"更新用户,内容为："+JSONUtil.toJsonStr(updateUserDto));
 		//记录数据库日志
-		dbTbLogService.createDbTbLog(CommonUtil.getDbTbLog("users",userEntity.getId(),"更新",JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createDataLog(account,1,"users",updateUserDto.getId(),"更新用户,内容为："+JSONUtil.toJsonStr(updateUserDto));
 		return Result.showInfo(0,"Success",null);
 	}
 
@@ -113,6 +113,7 @@ public class UserController {
 	//删除用户
 	@PostMapping("/admin/deleteUser")
 	public Result deleteUser(@Validated @RequestBody IdDto idDto, HttpServletRequest request){
+		String account = JWTUtil.getAccount(request.getHeader("token"));
 		//先判断ID指定的用户是否存在
 		UserEntity userEntity = userService.getUserById(idDto.getId());
 		if(userEntity == null){
@@ -120,7 +121,7 @@ public class UserController {
 		}
 		userService.deleteUser(idDto.getId());
 		//记录用户日志
-		userLogService.createUserLog(CommonUtil.getUserLog("删除用户,ID为："+ userEntity.getId(),JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createUserLog(account,"删除用户,ID为："+idDto.getId());
 		return Result.showInfo(0,"Success", null);
 	}
 
@@ -163,9 +164,9 @@ public class UserController {
 		//更新用户
 		userService.updateUserByAccount(newUserEntity);
 		//记录用户日志
-		userLogService.createUserLog(CommonUtil.getUserLog("更新用户密码,操作人为："+account,JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createUserLog(account,"更新我的密码,内容为："+JSONUtil.toJsonStr(updateUserPasswordByAccountDto));
 		//记录数据库日志
-		dbTbLogService.createDbTbLog(CommonUtil.getDbTbLog("users",userEntity.getId(),"更新用户密码",JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createDataLog(account,1,"users",userEntity.getId(),"更新我的密码,内容为："+JSONUtil.toJsonStr(updateUserPasswordByAccountDto));
 		return Result.showInfo(0,"Success",null);
 	}
 
@@ -178,7 +179,6 @@ public class UserController {
 		if(userEntity == null || !userEntity.getPassword().equals(userLoginDto.getPassword())){
 			return Result.showInfo(2,"账户或密码错误",null);
 		}
-
 		//生成token令牌，有效期12小时
 		String token = JWTUtil.createToken(userLoginDto.getAccount(),userEntity.getRole(),60*12);
 		data.set("token",token);
@@ -188,7 +188,46 @@ public class UserController {
 		data.set("userInfo", JSONUtil.parseObj(userEntity));
 		logService.createLoginLog(userLoginDto.getAccount(),request);
 		logService.createUserLog(userLoginDto.getAccount(),"登录");
+		String ip = CommonUtil.getClientIpByRequest(request);
+		List<ClientEntity> clientList = clientService.getRecordByIp(ip);
+		if(clientList.isEmpty()){
+			ClientEntity clientEntity = new ClientEntity();
+			UserAgent ua = UserAgentUtil.parse(request.getHeader("User-Agent"));
+
+			clientEntity.setIp(ip);
+			clientEntity.setOs(ua.getPlatform().toString());
+			clientEntity.setLastOntime(DateTime.now().toString());
+			clientEntity.setCodeVersion("v1.0");
+			clientEntity.setOutbreakPreventionStatus(0);
+			clientEntity.setFireWallStatus(1);
+			clientEntity.setStatus(1);
+			clientService.recordOnline(clientEntity);
+		}else{
+			ClientEntity clientEntity = new ClientEntity();
+			clientEntity.setId(clientList.get(0).getId());
+			clientEntity.setIp(ip);
+			clientEntity.setLastOntime(DateTime.now().toString());
+			clientEntity.setFireWallStatus(1);
+			clientEntity.setStatus(1);
+			clientService.updateOnlineTime(clientEntity);
+		}
 		return Result.showInfo(0,"Success",data);
+	}
+
+	//退出登录
+	@PostMapping("/logOut")
+	public Result logOut(HttpServletRequest request){
+		String ip = CommonUtil.getClientIpByRequest(request);
+		List<ClientEntity> clientList = clientService.getRecordByIp(ip);
+		if(!clientList.isEmpty()){
+			ClientEntity clientEntity = new ClientEntity();
+			clientEntity.setId(clientList.get(0).getId());
+			clientEntity.setIp(ip);
+			clientEntity.setLastOntime(DateTime.now().toString());
+			clientEntity.setStatus(0);
+			clientService.updateOnlineTime(clientEntity);
+		}
+		return Result.showInfo(0,"Success",null);
 	}
 
 	//罗列教师
@@ -202,6 +241,7 @@ public class UserController {
 	//批量新增用户
 	@PostMapping("/createUserByBatch")
 	public Result createUserByBatch(@Validated @RequestBody CreateUserByBatchDto createUserByBatchDto, HttpServletRequest request) {
+		String account = JWTUtil.getAccount(request.getHeader("token"));
 		//获取文件
 		String excelPath = CommonUtil.urlToLocalPath(createUserByBatchDto.getFilePath());
 		//验证文件
@@ -224,7 +264,7 @@ public class UserController {
 		JSONObject resInfo = new JSONObject();
 		resInfo.set("ids",ids);
 		//记录用户日志
-		userLogService.createUserLog(CommonUtil.getUserLog("批量创建用户,内容为："+JSONUtil.toJsonStr(createUserByBatchDto), JWTUtil.getAccount(request.getHeader("token"))));
+		logService.createUserLog(account,"批量新增用户,内容为："+JSONUtil.toJsonStr(createUserByBatchDto));
 		return Result.showInfo(0, "Success", resInfo);
 	}
 

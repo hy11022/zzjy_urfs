@@ -132,6 +132,10 @@ public class CourseExperimentController {
 		if(courseExperimentEntity.getReportMethod()==2){
 			courseExperimentEntity.setTeacherRate(0);
 		}
+
+		if(courseExperimentEntity.getReportMethod()==3 && createCourseExperimentDto.getTeacherRate()==null){
+			return Result.showInfo(1,"教师批改成绩占比不能为空", null);
+		}
 		if(courseExperimentService.create(courseExperimentEntity)==0){
 			return Result.showInfo(1,"创建失败", null);
 		}
