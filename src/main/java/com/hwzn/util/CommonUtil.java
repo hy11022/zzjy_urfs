@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.hwzn.pojo.entity.LoginLogEntity;
 import cn.hutool.http.useragent.UserAgent;
 import com.hwzn.pojo.entity.UserLogEntity;
-import com.hwzn.pojo.entity.DbTbLogEntity;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import javax.annotation.Resource;
@@ -125,23 +124,6 @@ public class CommonUtil {
 		userLogEntity.setDes(des);
 		userLogEntity.setCreaterAccount(createrAccount);
 		return userLogEntity;
-	}
-
-	/**
-	 * 获取数据库数据表日志
-	 * @param tbName 数据表名称
-	 * @param rId 记录ID
-	 * @param des 描述
-	 * @param createrAccount 创建账户
-	 */
-	public static DbTbLogEntity getDbTbLog(String tbName, Integer rId, String des,String createrAccount) {
-		DbTbLogEntity dbTbLogEntity=new DbTbLogEntity();
-		dbTbLogEntity.setDbName("zzjy_urfs");
-		dbTbLogEntity.setTbName(tbName);
-		dbTbLogEntity.setRId(rId);
-		dbTbLogEntity.setDes(des);
-		dbTbLogEntity.setCreaterAccount(createrAccount);
-		return dbTbLogEntity;
 	}
 
 	/**

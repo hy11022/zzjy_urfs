@@ -4,7 +4,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hwzn.pojo.Result;
-import com.hwzn.pojo.dto.course.*;
 import com.hwzn.pojo.dto.studyRecord.CreateStudyRecordDto;
 import com.hwzn.pojo.dto.studyRecord.FilterStudyRecordListDto;
 import com.hwzn.pojo.entity.*;

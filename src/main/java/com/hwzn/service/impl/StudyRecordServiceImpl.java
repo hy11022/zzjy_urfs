@@ -1,17 +1,14 @@
 package com.hwzn.service.impl;
 
 import javax.annotation.Resource;
-
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hwzn.mapper.StudyRecordMapper;
 import com.hwzn.pojo.dto.studyRecord.FilterStudyRecordListDto;
-import com.hwzn.pojo.entity.CourseEntity;
 import com.hwzn.pojo.entity.StudyRecordsEntity;
 import com.hwzn.service.StudyRecordService;
-import com.hwzn.util.CommonUtil;
 import org.springframework.stereotype.Service;
 
 /**

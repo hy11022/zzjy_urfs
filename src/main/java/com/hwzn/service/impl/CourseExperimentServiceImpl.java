@@ -82,8 +82,8 @@ public class CourseExperimentServiceImpl implements CourseExperimentService {
 				.ge("a.experiment_end_time", DateTime.now())
 				.eq("a.allow_train",1)
 				.apply("a.course_id IN (SELECT course_id FROM course_terms WHERE status =1)")
-				.apply("a.course_id IN (SELECT course_id FROM course_students WHERE term_id IN (SELECT id FROM course_terms WHERE status=1) AND account='"+filterMyTrainCourseExperimentListDto.getAccount()+"') ")
-				.apply("FIND_IN_SET('"+filterMyTrainCourseExperimentListDto.getClassCode()+"',a.experiment_class)");
+				.apply("a.course_id IN (SELECT course_id FROM course_students WHERE term_id IN (SELECT id FROM course_terms WHERE status=1) AND account='"+filterMyTrainCourseExperimentListDto.getAccount()+"') ");
+//				.apply("FIND_IN_SET('"+filterMyTrainCourseExperimentListDto.getClassCode()+"',a.experiment_class)");
 		return courseExperimentMapper.filterMyTrainCourseExperimentList(page,queryWrapper);
 	}
 
